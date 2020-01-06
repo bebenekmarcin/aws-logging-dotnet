@@ -81,7 +81,16 @@ namespace AWS.Logger.Core
 
             var credentials = DetermineCredentials(config);
 
-            if (_config.Region != null)
+            if (!string.IsNullOrWhiteSpace(_config.ServiceUrl))
+            {
+                var cloudWatchConfig = new AmazonCloudWatchLogsConfig
+                {
+                    ServiceURL = _config.ServiceUrl
+                };
+
+                _client = new AmazonCloudWatchLogsClient(credentials, cloudWatchConfig);
+            }
+            else if (_config.Region != null)
             {
                 _client = new AmazonCloudWatchLogsClient(credentials, Amazon.RegionEndpoint.GetBySystemName(_config.Region));
             }
@@ -274,7 +283,7 @@ namespace AWS.Logger.Core
             else
             {
                 var messageParts = BreakupMessage(rawMessage);
-                foreach(var message in messageParts)
+                foreach (var message in messageParts)
                 {
                     AddSingleMessage(message);
                 }
@@ -479,7 +488,7 @@ namespace AWS.Logger.Core
         {
             var streamName = new StringBuilder();
 
-            
+
             var prefix = config.LogStreamNamePrefix;
             if (!string.IsNullOrEmpty(prefix))
             {
@@ -634,7 +643,7 @@ namespace AWS.Logger.Core
 
         private void LogLibraryServiceError(Exception ex, string serviceUrl = null)
         {
-            LogLibraryAlert?.Invoke(this, new LogLibraryEventArgs(ex) { ServiceUrl = serviceUrl ?? GetServiceUrl() } );
+            LogLibraryAlert?.Invoke(this, new LogLibraryEventArgs(ex) { ServiceUrl = serviceUrl ?? GetServiceUrl() });
             if (!string.IsNullOrEmpty(_config.LibraryLogFileName))
             {
                 LogLibraryError(ex, _config.LibraryLogFileName);

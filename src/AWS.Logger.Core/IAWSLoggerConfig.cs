@@ -57,6 +57,12 @@ namespace AWS.Logger
         string Region { get;  }
 
         /// <summary>
+        /// Gets and sets of the ServiceURL property. This is an optional property; 
+        /// change it only if you want to try a different service endpoint. 
+        /// </summary>
+        string ServiceUrl { get; set; }
+
+        /// <summary>
         /// Gets the BatchPushInterval property. For performance the log messages are sent to AWS in batch sizes. BatchPushInterval 
         /// dictates the frequency of when batches are sent. If either BatchPushInterval or BatchSizeInBytes are exceeded the batch will be sent.
         /// <para>
